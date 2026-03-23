@@ -1,26 +1,97 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fdfaf4; /* Soft cream/off-white for a warm, playful feel */
+  --foreground: #162836;
+  --primary: #162836;
+  --accent-orange: #cf7650;
+  --accent-peach: #dba58a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-primary: var(--primary);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-peach: var(--accent-peach);
+  --color-accent-1: var(--accent-orange);
+  --color-accent-2: var(--accent-peach);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-display: var(--font-fredoka), sans-serif;
+  --font-body: var(--font-quicksand), sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  /* Make playful base styles, e.g. subtle noise overlay can be added later */
+}
+
+/* Custom Utilities for Playful Aesthetics */
+@layer utilities {
+  .shadow-playful {
+    box-shadow: 4px 4px 0px 0px var(--primary);
+  }
+  .shadow-playful-hover {
+    box-shadow: 6px 6px 0px 0px var(--accent-orange);
+    transform: translate(-2px, -2px);
+  }
+  .border-playful {
+    border: 3px solid var(--primary);
+  }
+  .container-fluid {
+    width: 100%;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@layer utilities {
+  .stroke-text {
+    -webkit-text-stroke: 2px var(--primary);
+    color: transparent;
+  }
+}
+
+@layer utilities {
+  .animate-blob-bounce {
+    animation: blob-bounce 15s infinite ease-in-out alternate;
+  }
+  .animate-blob-bounce-delayed {
+    animation: blob-bounce-delayed 12s infinite ease-in-out alternate;
+  }
+
+  @keyframes blob-bounce {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+      transform: translate(-40px, 20px) scale(0.9);
+    }
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+  }
+
+  @keyframes blob-bounce-delayed {
+    0% {
+      transform: translate(0, 0) scale(1);
+    }
+    33% {
+      transform: translate(-30px, 40px) scale(1.15);
+    }
+    66% {
+      transform: translate(40px, -20px) scale(0.85);
+    }
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+  }
 }
