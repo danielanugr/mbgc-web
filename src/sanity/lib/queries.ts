@@ -39,6 +39,21 @@ export const EXPERIMENTAL_getUpcomingEvents = defineQuery(`
   }
 `);
 
+export const EXPERIMENTAL_getEventsPaginated = defineQuery(`
+  *[_type == "event"] | order(date desc) [$start...$end] {
+    _id,
+    title,
+    "slug": slug.current,
+    date,
+    location,
+    image
+  }
+`);
+
+export const EXPERIMENTAL_getTotalEvents = defineQuery(`
+  count(*[_type == "event"])
+`);
+
 export const EXPERIMENTAL_getAllEvents = defineQuery(`
   *[_type == "event"] | order(date desc) {
     _id,
@@ -59,4 +74,21 @@ export const EXPERIMENTAL_getEventBySlug = defineQuery(`
     description,
     image
   }
+`);
+
+export const EXPERIMENTAL_getBoardGamesPaginated = defineQuery(`
+  *[_type == "boardGame" && (coalesce($searchQuery, "") == "" || name match "*" + $searchQuery + "*")] | order(name asc) [$start...$end] {
+    _id,
+    name,
+    "slug": slug.current,
+    publisher,
+    coverImage,
+    imageUrl,
+    bggRating,
+    bggId
+  }
+`);
+
+export const EXPERIMENTAL_getTotalBoardGames = defineQuery(`
+  count(*[_type == "boardGame" && (coalesce($searchQuery, "") == "" || name match "*" + $searchQuery + "*")])
 `);

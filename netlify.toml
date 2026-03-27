@@ -4,6 +4,7 @@
 
 [build.environment]
   NEXT_PRIVATE_LOCAL_WEBPACK = "true"
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SANITY_DATASET"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"

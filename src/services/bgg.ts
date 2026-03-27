@@ -38,7 +38,6 @@ export async function fetchBGGCollection() {
           ? jsonObj.items.item
           : [jsonObj.items.item];
 
-        // Format data sesuai dengan Skema Sanity
         const games = items.map((item: any) => ({
           bggId: Number(item["@_objectid"]),
           name: item.name?.["#text"] || item.name || "Unknown Game",
@@ -53,7 +52,7 @@ export async function fetchBGGCollection() {
         console.log(`BGG memproses antrean. Menunggu ${waitTime / 1000}s...`);
         await delay(waitTime);
         attempt++;
-        waitTime *= 2; // Exponential backoff
+        waitTime *= 2;
       } else {
         throw new Error(`Gagal fetch BGG. Status: ${response.status}`);
       }
@@ -110,7 +109,6 @@ export async function syncToSanity() {
         results.added++;
       }
 
-      // Delay kecil untuk menghormati API limits (rate limiter via Sanity Client)
       await delay(100);
     } catch (err: any) {
       console.error(`Gagal sync game: ${game.name}`, err.message);

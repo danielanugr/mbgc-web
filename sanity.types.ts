@@ -346,6 +346,29 @@ export type EXPERIMENTALgetUpcomingEventsResult = Array<{
 }>;
 
 // Source: src/sanity/lib/queries.ts
+// Variable: EXPERIMENTAL_getEventsPaginated
+// Query: *[_type == "event"] | order(date desc) [$start...$end] {    _id,    title,    "slug": slug.current,    date,    location,    image  }
+export type EXPERIMENTALgetEventsPaginatedResult = Array<{
+  _id: string;
+  title: string | null;
+  slug: string | null;
+  date: string | null;
+  location: string | null;
+  image: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+}>;
+
+// Source: src/sanity/lib/queries.ts
+// Variable: EXPERIMENTAL_getTotalEvents
+// Query: count(*[_type == "event"])
+export type EXPERIMENTALgetTotalEventsResult = number;
+
+// Source: src/sanity/lib/queries.ts
 // Variable: EXPERIMENTAL_getAllEvents
 // Query: *[_type == "event"] | order(date desc) {    _id,    title,    "slug": slug.current,    date,    location,    image  }
 export type EXPERIMENTALgetAllEventsResult = Array<{
@@ -405,6 +428,8 @@ declare module "@sanity/client" {
     '\n  *[_type == "boardGame"] | order(name asc) {\n    _id,\n    name,\n    "slug": slug.current,\n    publisher,\n    coverImage,\n    imageUrl,\n    bggRating,\n    bggId\n  }\n': EXPERIMENTALgetAllBoardGamesResult;
     '\n  *[_type == "boardGame" && slug.current == $slug][0] {\n    _id,\n    name,\n    publisher,\n    coverImage,\n    imageUrl,\n    bggRating,\n    bggId\n  }\n': EXPERIMENTALgetBoardGameBySlugResult;
     '\n  *[_type == "event" && date >= now()] | order(date asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    date,\n    location,\n    image,\n    description\n  }\n': EXPERIMENTALgetUpcomingEventsResult;
+    '\n  *[_type == "event"] | order(date desc) [$start...$end] {\n    _id,\n    title,\n    "slug": slug.current,\n    date,\n    location,\n    image\n  }\n': EXPERIMENTALgetEventsPaginatedResult;
+    '\n  count(*[_type == "event"])\n': EXPERIMENTALgetTotalEventsResult;
     '\n  *[_type == "event"] | order(date desc) {\n    _id,\n    title,\n    "slug": slug.current,\n    date,\n    location,\n    image\n  }\n': EXPERIMENTALgetAllEventsResult;
     '\n  *[_type == "event" && slug.current == $slug][0] {\n    _id,\n    title,\n    date,\n    location,\n    description,\n    image\n  }\n': EXPERIMENTALgetEventBySlugResult;
   }

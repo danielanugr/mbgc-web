@@ -1,120 +1,86 @@
-import { Search } from "lucide-react";
-import Link from "next/link";
+import { Dices } from "lucide-react";
+import { InventorySearch } from "./InventorySearch";
 import { client } from "@/sanity/client";
-import { EXPERIMENTAL_getAllBoardGames } from "@/sanity/lib/queries";
-import { urlForImage } from "@/sanity/lib/image";
+import {
+  EXPERIMENTAL_getBoardGamesPaginated,
+  EXPERIMENTAL_getTotalBoardGames,
+} from "@/sanity/lib/queries";
+import { GameGrid } from "./GameGrid";
 
-// Placeholder untuk fallback saat image kosong
-const FALLBACK_IMAGE =
-  "https://images.unsplash.com/photo-1632501641765-e5e8d5a71019?q=80&w=400&auto=format&fit=crop";
+export const revalidate = 60;
 
-export default async function InventoryPage() {
-  // Ambil data langsung dari Sanity (Next.js 15 Server Component)
-  const games = await client.fetch(EXPERIMENTAL_getAllBoardGames);
+const ITEMS_PER_PAGE = 12;
+
+export default async function InventoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const params = await searchParams;
+  const q = params.q || "";
+
+  // Fetch first page and total concurrently
+  const [initialGames, totalGames] = await Promise.all([
+    client.fetch(EXPERIMENTAL_getBoardGamesPaginated, {
+      start: 0,
+      end: ITEMS_PER_PAGE,
+      searchQuery: q,
+    }),
+    client.fetch(EXPERIMENTAL_getTotalBoardGames, {
+      searchQuery: q,
+    }),
+  ]);
 
   return (
-    <main className='flex-1 flex flex-col items-center pb-24'>
-      {/* Navbar Mock */}
-      <nav className='w-full flex items-center justify-between py-6 container-fluid mb-12'>
-        <Link
-          href='/'
-          className='font-display font-bold text-2xl tracking-tighter text-primary'
-        >
-          MBGC<span className='text-accent-orange'>.</span>
-        </Link>
-        <div className='hidden md:flex gap-8 font-bold text-lg'>
-          <Link
-            href='/event'
-            className='hover:text-accent-orange transition-colors'
-          >
-            Events
-          </Link>
-          <Link
-            href='/gallery'
-            className='hover:text-accent-orange transition-colors'
-          >
-            Gallery
-          </Link>
-          <Link
-            href='/inventory'
-            className='text-accent-orange transition-colors'
-          >
-            Games
-          </Link>
-          <Link
-            href='/about'
-            className='hover:text-accent-orange transition-colors'
-          >
-            About Us
-          </Link>
-        </div>
-      </nav>
+    <main className='flex-1 flex flex-col items-center pb-24 pt-8 md:pt-12 relative'>
+      <div className='absolute top-20 right-0 w-72 h-72 bg-accent-peach/20 rounded-full blur-3xl -z-10 animate-blob-bounce'></div>
 
-      <div className='container-fluid w-full'>
-        <h1 className='font-display text-6xl md:text-8xl font-black text-primary mb-6'>
-          BOARD <span className='text-accent-peach stroke-text'>GAMES</span>
-        </h1>
-        <p className='text-xl md:text-2xl font-bold text-primary/70 mb-12 max-w-2xl'>
-          Koleksi board game yang bisa kamu mainkan pas playday. Dari party game
-          sampai euro game berat!
-        </p>
+      <div className='container-fluid w-full max-w-7xl'>
+        <section className='bg-white border-4 border-primary rounded-3xl p-8 md:p-12 shadow-[8px_8px_0px_0px_#162836] relative overflow-hidden mb-16'>
+          <div className='absolute -right-20 -bottom-20 w-64 h-64 bg-accent-orange/10 rounded-full blur-2xl'></div>
+          <div className='absolute top-10 left-10 w-4 h-4 bg-accent-peach rounded-full animate-pulse'></div>
+          <div
+            className='absolute bottom-10 right-1/4 w-6 h-6 bg-primary rounded-full animate-pulse'
+            style={{ animationDelay: "1s" }}
+          ></div>
 
-        {/* Search Bar - Playful Input */}
-        <div className='relative max-w-xl mb-16'>
-          <div className='absolute inset-y-0 left-4 flex items-center pointer-events-none'>
-            <Search className='text-primary/50' size={24} />
-          </div>
-          <input
-            type='text'
-            placeholder='Cari game favoritmu...'
-            className='w-full bg-white border-playful rounded-2xl py-4 pl-12 pr-4 font-bold text-lg text-primary outline-none shadow-playful focus:shadow-[6px_6px_0px_0px_#cf7650] focus:-translate-y-1 transition-all placeholder:text-primary/30'
-          />
-        </div>
-
-        {/* Inventory Grid */}
-        <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8'>
-          {games.length === 0 ? (
-            <div className='col-span-full py-20 text-center font-bold text-xl text-primary/50'>
-              Oops, belum ada game di lemarinya nih 😢
-            </div>
-          ) : (
-            games.map((game) => (
-              <div
-                key={game._id}
-                className='bg-white border-playful rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_#162836] hover:shadow-[8px_8px_0px_0px_#cf7650] hover:-translate-y-2 transition-all flex flex-col group'
-              >
-                <div className='relative aspect-square border-b-3 border-primary overflow-hidden bg-primary/5'>
-                  <img
-                    src={
-                      game.coverImage
-                        ? urlForImage(game.coverImage)?.url()
-                        : game.imageUrl || FALLBACK_IMAGE
-                    }
-                    alt={game.name || "Board Game"}
-                    className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-500'
-                  />
-                  {game.bggRating && (
-                    <div className='absolute top-3 right-3 bg-accent-orange text-white font-bold font-display px-3 py-1 rounded-xl border-2 border-primary shadow-[2px_2px_0px_0px_#162836]'>
-                      {game.bggRating.toFixed(1)} ★
-                    </div>
-                  )}
-                </div>
-                <div className='p-4 flex-1 flex flex-col justify-between'>
-                  <div>
-                    <h3 className='font-display font-bold text-xl md:text-2xl text-primary leading-tight mb-1'>
-                      {game.name}
-                    </h3>
-                    {game.publisher && (
-                      <p className='text-primary/60 font-bold text-sm'>
-                        {game.publisher}
-                      </p>
-                    )}
-                  </div>
-                </div>
+          <div className='relative z-10 flex flex-col md:flex-row items-center justify-between gap-8'>
+            <div className='text-center md:text-left flex-1'>
+              <div className='inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-accent-peach/30 border-2 border-primary text-primary font-bold font-display mb-6 shadow-[2px_2px_0px_0px_#162836]'>
+                <Dices className='w-5 h-5 text-accent-orange' />
+                <span>Gudang Mainan Kami</span>
               </div>
-            ))
-          )}
-        </div>
+              <h1 className='font-display text-5xl md:text-7xl lg:text-8xl font-black text-primary leading-[0.9] tracking-tight mb-6 uppercase'>
+                BOARD <br className='hidden md:block' />
+                <span className='inline-block transform -rotate-3 bg-accent-peach text-primary border-4 border-primary shadow-[6px_6px_0px_0px_#162836] px-6 py-2 mt-4 relative z-10'>
+                  GAMES
+                </span>
+              </h1>
+              <p className='text-xl md:text-2xl font-bold text-primary/80 max-w-xl'>
+                Eksplorasi koleksi board game yang tersedia di lemari MBGC. Dari
+                game party buat ketawa sampai euro game buat mikir keras!
+              </p>
+            </div>
+
+            <div className='hidden md:flex flex-col items-center justify-center p-8 bg-accent-orange text-white rounded-3xl border-playful shadow-[6px_6px_0px_0px_#162836] transform rotate-3 hover:rotate-0 transition-transform'>
+              <span className='font-display font-black text-7xl'>
+                {totalGames}
+              </span>
+              <span className='font-bold text-xl uppercase tracking-wider mt-2 border-t-2 border-white/30 pt-2'>
+                Games
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <InventorySearch initialQuery={q} />
+
+        {/* GAMES GRID INFINITE SCROLL */}
+        <GameGrid
+          initialGames={initialGames || []}
+          totalGames={totalGames || 0}
+          searchQuery={q}
+        />
       </div>
     </main>
   );
