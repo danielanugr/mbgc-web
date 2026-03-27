@@ -1,5 +1,5 @@
 import { XMLParser } from "fast-xml-parser";
-import { writeClient } from "@/sanity/client";
+import { getWriteClient } from "@/sanity/client";
 import slugify from "slugify";
 
 const BGG_USERNAME = "lumiguia";
@@ -15,7 +15,7 @@ export async function fetchBGGCollection() {
     try {
       const response = await fetch(API_URL, {
         headers: {
-          Authorization: `Bearer ${process.env.BGG_XML_API_KEY}`,
+          Authorization: `Bearer ${process.env["BGG_XML_API_KEY"]}`,
         },
       });
 
@@ -85,7 +85,7 @@ export async function syncToSanity() {
       const slug = slugify(game.name, { lower: true, strict: true });
 
       // Upsert: mencari berdasarkan bggId (pastikan unique)
-      const existing = await writeClient.fetch(
+      const existing = await getWriteClient().fetch(
         `*[_type == "boardGame" && bggId == $bggId][0]`,
         { bggId: game.bggId },
       );
@@ -103,10 +103,10 @@ export async function syncToSanity() {
       };
 
       if (existing) {
-        await writeClient.patch(existing._id).set(docObj).commit();
+        await getWriteClient().patch(existing._id).set(docObj).commit();
         results.updated++;
       } else {
-        await writeClient.create(docObj);
+        await getWriteClient().create(docObj);
         results.added++;
       }
 
