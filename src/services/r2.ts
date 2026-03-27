@@ -1,21 +1,27 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-const accountId = process.env.R2_ACCOUNT_ID;
-const accessKeyId = process.env.R2_ACCESS_KEY_ID;
-const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
+// Use dynamic access to prevent Next.js from inlining secret values at build time
+function getEnv(key: string): string {
+  return process.env[key] || "";
+}
 
-export const bucketName = process.env.R2_BUCKET_NAME || "";
 export const publicUrl = process.env.NEXT_PUBLIC_R2_PUBLIC_URL || "";
 
-// Configure the S3 client to point to Cloudflare R2
-export const r2Client = new S3Client({
-  region: "auto",
-  endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: accessKeyId || "",
-    secretAccessKey: secretAccessKey || "",
-  },
-});
+let _r2Client: S3Client | null = null;
+
+function getR2Client(): S3Client {
+  if (!_r2Client) {
+    _r2Client = new S3Client({
+      region: "auto",
+      endpoint: `https://${getEnv("R2_ACCOUNT_ID")}.r2.cloudflarestorage.com`,
+      credentials: {
+        accessKeyId: getEnv("R2_ACCESS_KEY_ID"),
+        secretAccessKey: getEnv("R2_SECRET_ACCESS_KEY"),
+      },
+    });
+  }
+  return _r2Client;
+}
 
 /**
  * Upload a file buffer to Cloudflare R2
@@ -29,6 +35,11 @@ export async function uploadToR2(
   fileName: string,
   contentType: string,
 ): Promise<string> {
+  const accountId = getEnv("R2_ACCOUNT_ID");
+  const accessKeyId = getEnv("R2_ACCESS_KEY_ID");
+  const secretAccessKey = getEnv("R2_SECRET_ACCESS_KEY");
+  const bucketName = getEnv("R2_BUCKET_NAME");
+
   if (!accountId || !accessKeyId || !secretAccessKey) {
     throw new Error(
       "R2 credentials are not fully configured in env variables.",
@@ -45,7 +56,7 @@ export async function uploadToR2(
     ContentType: contentType,
   });
 
-  await r2Client.send(command);
+  await getR2Client().send(command);
 
   // Eliminate double slashes if any
   const normalizedPublicUrl = publicUrl.endsWith("/")
