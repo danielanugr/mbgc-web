@@ -1,38 +1,17 @@
 import { Search } from "lucide-react";
 import Link from "next/link";
+import { client } from "@/sanity/client";
+import { EXPERIMENTAL_getAllBoardGames } from "@/sanity/lib/queries";
+import { urlForImage } from "@/sanity/lib/image";
 
-const MOCK_GAMES = [
-  {
-    id: 1,
-    name: "Catan",
-    publisher: "Kosmos",
-    rating: 7.1,
-    img: "https://images.unsplash.com/photo-1632501641765-e5e8d5a71019?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: 2,
-    name: "Ticket to Ride",
-    publisher: "Days of Wonder",
-    rating: 7.4,
-    img: "https://images.unsplash.com/photo-1611891487122-2075b9e7fd18?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: 3,
-    name: "Splendor",
-    publisher: "Space Cowboys",
-    rating: 7.4,
-    img: "https://images.unsplash.com/photo-1632501641765-e5e8d5a71019?q=80&w=400&auto=format&fit=crop",
-  },
-  {
-    id: 4,
-    name: "Wingspan",
-    publisher: "Space Cowboys",
-    rating: 8.1,
-    img: "https://images.unsplash.com/photo-1611891487122-2075b9e7fd18?q=80&w=400&auto=format&fit=crop",
-  },
-];
+// Placeholder untuk fallback saat image kosong
+const FALLBACK_IMAGE =
+  "https://images.unsplash.com/photo-1632501641765-e5e8d5a71019?q=80&w=400&auto=format&fit=crop";
 
-export default function InventoryPage() {
+export default async function InventoryPage() {
+  // Ambil data langsung dari Sanity (Next.js 15 Server Component)
+  const games = await client.fetch(EXPERIMENTAL_getAllBoardGames);
+
   return (
     <main className='flex-1 flex flex-col items-center pb-24'>
       {/* Navbar Mock */}
@@ -94,33 +73,47 @@ export default function InventoryPage() {
 
         {/* Inventory Grid */}
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8'>
-          {MOCK_GAMES.map((game) => (
-            <div
-              key={game.id}
-              className='bg-white border-playful rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_#162836] hover:shadow-[8px_8px_0px_0px_#cf7650] hover:-translate-y-2 transition-all flex flex-col group'
-            >
-              <div className='relative aspect-square border-b-3 border-primary overflow-hidden bg-primary/5'>
-                <img
-                  src={game.img}
-                  alt={game.name}
-                  className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-500'
-                />
-                <div className='absolute top-3 right-3 bg-accent-orange text-white font-bold font-display px-3 py-1 rounded-xl border-2 border-primary shadow-[2px_2px_0px_0px_#162836]'>
-                  {game.rating} ★
-                </div>
-              </div>
-              <div className='p-4 flex-1 flex flex-col justify-between'>
-                <div>
-                  <h3 className='font-display font-bold text-2xl text-primary leading-tight mb-1'>
-                    {game.name}
-                  </h3>
-                  <p className='text-primary/60 font-bold text-sm'>
-                    {game.publisher}
-                  </p>
-                </div>
-              </div>
+          {games.length === 0 ? (
+            <div className='col-span-full py-20 text-center font-bold text-xl text-primary/50'>
+              Oops, belum ada game di lemarinya nih 😢
             </div>
-          ))}
+          ) : (
+            games.map((game) => (
+              <div
+                key={game._id}
+                className='bg-white border-playful rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_#162836] hover:shadow-[8px_8px_0px_0px_#cf7650] hover:-translate-y-2 transition-all flex flex-col group'
+              >
+                <div className='relative aspect-square border-b-3 border-primary overflow-hidden bg-primary/5'>
+                  <img
+                    src={
+                      game.coverImage
+                        ? urlForImage(game.coverImage)?.url()
+                        : game.imageUrl || FALLBACK_IMAGE
+                    }
+                    alt={game.name || "Board Game"}
+                    className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-500'
+                  />
+                  {game.bggRating && (
+                    <div className='absolute top-3 right-3 bg-accent-orange text-white font-bold font-display px-3 py-1 rounded-xl border-2 border-primary shadow-[2px_2px_0px_0px_#162836]'>
+                      {game.bggRating.toFixed(1)} ★
+                    </div>
+                  )}
+                </div>
+                <div className='p-4 flex-1 flex flex-col justify-between'>
+                  <div>
+                    <h3 className='font-display font-bold text-xl md:text-2xl text-primary leading-tight mb-1'>
+                      {game.name}
+                    </h3>
+                    {game.publisher && (
+                      <p className='text-primary/60 font-bold text-sm'>
+                        {game.publisher}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </main>
