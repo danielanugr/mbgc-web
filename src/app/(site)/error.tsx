@@ -60,6 +60,7 @@ export default function Error({
 
             <div className='flex flex-col sm:flex-row items-center justify-center gap-4'>
               <button
+                type='button'
                 onClick={reset}
                 className='flex items-center gap-3 px-8 py-4 bg-primary text-white font-display font-black text-xl rounded-2xl border-4 border-primary hover:translate-y-1 hover:translate-x-1 transition-transform'
                 style={{ boxShadow: "6px 6px 0px 0px #dba58a" }}

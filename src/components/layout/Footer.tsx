@@ -33,7 +33,10 @@ export function Footer() {
         >
           <Instagram size={24} /> @mataram_bg
         </a>
-        <button className='bg-white text-primary font-display text-xl px-6 py-3 rounded-xl shadow-[4px_4px_0px_0px_#162836] border-2 border-primary hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#162836] transition-all flex items-center justify-center gap-2'>
+        <button
+          type='button'
+          className='bg-white text-primary font-display text-xl px-6 py-3 rounded-xl shadow-[4px_4px_0px_0px_#162836] border-2 border-primary hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#162836] transition-all flex items-center justify-center gap-2'
+        >
           Join WhatsApp
         </button>
       </div>

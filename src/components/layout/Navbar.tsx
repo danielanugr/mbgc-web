@@ -47,7 +47,10 @@ export function Navbar() {
           );
         })}
       </div>
-      <button className='bg-primary text-white font-bold font-display px-6 py-2 rounded-xl shadow-playful hover:shadow-playful-hover transition-all active:translate-y-1 active:shadow-none hidden md:block border-2 border-primary'>
+      <button
+        type='button'
+        className='bg-primary text-white font-bold font-display px-6 py-2 rounded-xl shadow-playful hover:shadow-playful-hover transition-all active:translate-y-1 active:shadow-none hidden md:block border-2 border-primary'
+      >
         Join Us!
       </button>
     </nav>

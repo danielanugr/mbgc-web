@@ -38,7 +38,7 @@ export async function fetchBGGCollection() {
           ? jsonObj.items.item
           : [jsonObj.items.item];
 
-        const games = items.map((item: any) => ({
+        const games = items.map((item: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => ({
           bggId: Number(item["@_objectid"]),
           name: item.name?.["#text"] || item.name || "Unknown Game",
           image: item.image || "",
@@ -77,7 +77,7 @@ export async function syncToSanity() {
 
   console.log(`Ditemukan ${games.length} game. Memulai Upsert ke Sanity...`);
 
-  const results = { added: 0, updated: 0, errors: [] as any[] };
+  const results = { added: 0, updated: 0, errors: [] as any[] /* eslint-disable-line @typescript-eslint/no-explicit-any */ };
 
   for (const game of games) {
     try {
@@ -110,7 +110,7 @@ export async function syncToSanity() {
       }
 
       await delay(100);
-    } catch (err: any) {
+    } catch (err: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
       console.error(`Gagal sync game: ${game.name}`, err.message);
       results.errors.push({ game: game.name, error: err.message });
     }

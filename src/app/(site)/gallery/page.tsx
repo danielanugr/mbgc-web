@@ -2,15 +2,19 @@ import { client } from "@/sanity/client";
 import { EXPERIMENTAL_getAllGalleries } from "@/sanity/lib/queries";
 import { urlForImage } from "@/sanity/lib/image";
 import Link from "next/link";
+import Image from "next/image";
 import { Images, CalendarDays, ArrowRight, CameraOff } from "lucide-react";
+
+import { generateSEOMetadata } from "@/lib/seo";
 
 export const revalidate = 60;
 
-export const metadata = {
-  title: "Gallery | Mataram Board Game",
+export const metadata = generateSEOMetadata({
+  title: "Gallery",
   description:
     "Dokumentasi foto dari setiap playday dan event Mataram Board Game Community.",
-};
+  url: "/gallery",
+});
 
 export default async function GalleryPage() {
   const galleries = await client.fetch(EXPERIMENTAL_getAllGalleries);
@@ -27,7 +31,7 @@ export default async function GalleryPage() {
 
           <div className='relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left flex-1'>
             <div className='flex-1'>
-              <div className='inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary border-2 border-primary text-white font-bold font-display mb-6 shadow-[4px_4px_0px_0px_#162836] rotate-[-2deg]'>
+              <div className='inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary border-2 border-primary text-white font-bold font-display mb-6 shadow-[4px_4px_0px_0px_#162836] rotate-2'>
                 <Images className='w-5 h-5' />
                 <span className='uppercase tracking-wide'>Arsip Visual</span>
               </div>
@@ -119,9 +123,11 @@ function AlbumCard({ album, index }: { album: GalleryAlbum; index: number }) {
     >
       <div className='relative h-56 overflow-hidden bg-accent-peach/20'>
         {album.coverImage ? (
-          <img
+          <Image
             src={urlForImage(album.coverImage).width(800).height(600).url()}
             alt={album.title ?? "Gallery"}
+            width={800}
+            height={600}
             className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'
           />
         ) : (

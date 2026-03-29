@@ -5,8 +5,30 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, CalendarDays, MapPin, CameraOff } from "lucide-react";
 import GalleryLightbox from "./GalleryLightbox";
+import { generateSEOMetadata } from "@/lib/seo";
 
 export const revalidate = 60;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const gallery = await client.fetch(EXPERIMENTAL_getGalleryBySlug, { slug });
+
+  if (!gallery) return generateSEOMetadata();
+
+  return generateSEOMetadata({
+    title: `Gallery: ${gallery.title}`,
+    description: `Dokumentasi acara ${gallery.title} yang diadakan pada ${new Date(gallery.date).toLocaleDateString("id-ID")}.`,
+    image: gallery.coverImage
+      ? urlForImage(gallery.coverImage).width(1200).height(630).url()
+      : undefined,
+    url: `/gallery/${slug}`,
+    type: "article",
+  });
+}
 
 export default async function GalleryDetailPage({
   params,
@@ -19,11 +41,15 @@ export default async function GalleryDetailPage({
   if (!gallery) notFound();
 
   const sanityImages = gallery.images ?? [];
-  const images = sanityImages.map((img: any) => ({
-    url: urlForImage(img).width(1200).url(),
-    alt: img.alt || gallery.title || "Gallery image",
-    _key: img._key,
-  }));
+  const images = sanityImages.map(
+    (
+      img: any /* eslint-disable-line @typescript-eslint/no-explicit-any */,
+    ) => ({
+      url: urlForImage(img).width(1200).url(),
+      alt: img.alt || gallery.title || "Gallery image",
+      _key: img._key,
+    }),
+  );
 
   return (
     <main className='flex-1 flex flex-col items-center pb-24 pt-8 md:pt-12'>
@@ -39,7 +65,7 @@ export default async function GalleryDetailPage({
         <div className='bg-primary text-white border-4 border-primary rounded-3xl p-8 md:p-12 shadow-[8px_8px_0px_0px_#cf7650] mb-12 relative overflow-hidden'>
           <div className='absolute -right-10 -top-10 w-40 h-40 bg-accent-orange rounded-full blur-xl opacity-40 pointer-events-none' />
           <div className='relative z-10'>
-            <div className='inline-block bg-accent-orange text-white font-display font-black px-4 py-1 rounded-xl border-2 border-white/30 mb-4 rotate-[-1deg] text-sm uppercase tracking-wider'>
+            <div className='inline-block bg-accent-orange text-white font-display font-black px-4 py-1 rounded-xl border-2 border-white/30 mb-4 -rotate-1 text-sm uppercase tracking-wider'>
               Album Foto
             </div>
             <h1 className='font-display text-4xl md:text-6xl font-black mb-4'>

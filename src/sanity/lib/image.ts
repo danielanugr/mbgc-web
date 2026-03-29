@@ -6,6 +6,6 @@ const imageBuilder = createImageUrlBuilder({
   dataset: dataset || "",
 });
 
-export const urlForImage = (source: any) => {
+export const urlForImage = (source: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) => {
   return imageBuilder?.image(source).auto("format").fit("max");
 };

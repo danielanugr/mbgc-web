@@ -8,7 +8,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { CalendarIcon, MapPinIcon, Ticket, PartyPopper } from "lucide-react";
 
+import { generateSEOMetadata } from "@/lib/seo";
+
 export const revalidate = 60;
+
+export const metadata = generateSEOMetadata({
+  title: "Events",
+  description:
+    "Daftar jadwal kumpul main dan playday Mataram Board Game Community.",
+  url: "/events",
+});
 
 export default async function EventsPage({
   searchParams,
@@ -43,7 +52,7 @@ export default async function EventsPage({
 
           <div className='relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left flex-1'>
             <div className='flex-1'>
-              <div className='inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border-2 border-primary text-primary font-bold font-display mb-6 shadow-[4px_4px_0px_0px_#162836] rotate-[-2deg]'>
+              <div className='inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border-2 border-primary text-primary font-bold font-display mb-6 shadow-[4px_4px_0px_0px_#162836] -rotate-2'>
                 <PartyPopper className='w-5 h-5' />
                 <span className='uppercase tracking-wide'>
                   Kumpul & Main Bareng
@@ -93,91 +102,95 @@ export default async function EventsPage({
           </div>
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12'>
-            {events.map((event: any) => {
-              const eventDate = new Date(event.date);
-              const isUpcoming = event.date && eventDate >= new Date();
+            {events.map(
+              (
+                event: any /* eslint-disable-line @typescript-eslint/no-explicit-any */,
+              ) => {
+                const eventDate = new Date(event.date);
+                const isUpcoming = event.date && eventDate >= new Date();
 
-              return (
-                <Link
-                  key={event._id}
-                  href={`/events/${event.slug}`}
-                  className='bg-white border-4 border-primary rounded-2xl flex flex-col group hover:-translate-y-3 transition-all duration-300 relative h-full'
-                  style={{ boxShadow: "6px 6px 0px 0px #162836" }}
-                >
-                  <div className='relative w-full aspect-[4/3] border-b-[4px] border-primary overflow-hidden rounded-t-[12px] bg-primary/5 box-border'>
-                    {event.image ? (
-                      <Image
-                        src={urlForImage(event.image).url()}
-                        alt={event.title || "Event Image"}
-                        fill
-                        className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 ease-in-out'
-                        sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-                      />
-                    ) : (
-                      <div className='absolute inset-0 flex items-center justify-center bg-accent-peach/20'>
-                        <CalendarIcon className='w-20 h-20 text-accent-orange/40' />
-                      </div>
-                    )}
-                    <div className='absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-300'></div>
-
-                    {isUpcoming && (
-                      <div className='absolute top-4 left-4 bg-accent-peach text-primary font-black font-display px-4 py-2 rounded-xl border-2 border-primary shadow-[2px_2px_0px_0px_#162836] transform -rotate-3 z-10'>
-                        Upcoming!
-                      </div>
-                    )}
-
-                    {event.date && (
-                      <div className='absolute bottom-4 right-4 bg-primary text-white font-black font-display text-center rounded-xl border-2 border-primary shadow-[4px_4px_0px_0px_#dba58a] transform rotate-3 group-hover:scale-110 transition-transform z-10 overflow-hidden flex flex-col'>
-                        <div className='bg-accent-orange px-4 py-1 text-sm uppercase tracking-widest border-b-2 border-primary'>
-                          {eventDate.toLocaleDateString("id-ID", {
-                            month: "short",
-                          })}
+                return (
+                  <Link
+                    key={event._id}
+                    href={`/events/${event.slug}`}
+                    className='bg-white border-4 border-primary rounded-2xl flex flex-col group hover:-translate-y-3 transition-all duration-300 relative h-full'
+                    style={{ boxShadow: "6px 6px 0px 0px #162836" }}
+                  >
+                    <div className='relative w-full aspect-4/3 border-b-4 border-primary overflow-hidden rounded-t-xl bg-primary/5 box-border'>
+                      {event.image ? (
+                        <Image
+                          src={urlForImage(event.image).url()}
+                          alt={event.title || "Event Image"}
+                          fill
+                          className='object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 ease-in-out'
+                          sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+                        />
+                      ) : (
+                        <div className='absolute inset-0 flex items-center justify-center bg-accent-peach/20'>
+                          <CalendarIcon className='w-20 h-20 text-accent-orange/40' />
                         </div>
-                        <div className='px-4 py-2 text-2xl leading-none'>
-                          {eventDate.toLocaleDateString("id-ID", {
-                            day: "numeric",
-                          })}
+                      )}
+                      <div className='absolute inset-0 bg-primary/0 group-hover:bg-primary/10 transition-colors duration-300'></div>
+
+                      {isUpcoming && (
+                        <div className='absolute top-4 left-4 bg-accent-peach text-primary font-black font-display px-4 py-2 rounded-xl border-2 border-primary shadow-[2px_2px_0px_0px_#162836] transform -rotate-3 z-10'>
+                          Upcoming!
                         </div>
-                      </div>
-                    )}
-                  </div>
+                      )}
 
-                  <div className='p-6 flex-1 flex flex-col justify-between bg-white rounded-b-[12px]'>
-                    <div>
-                      <h3 className='font-display font-black text-2xl text-primary leading-tight mb-4 group-hover:text-accent-orange transition-colors line-clamp-2'>
-                        {event.title}
-                      </h3>
+                      {event.date && (
+                        <div className='absolute bottom-4 right-4 bg-primary text-white font-black font-display text-center rounded-xl border-2 border-primary shadow-[4px_4px_0px_0px_#dba58a] transform rotate-3 group-hover:scale-110 transition-transform z-10 overflow-hidden flex flex-col'>
+                          <div className='bg-accent-orange px-4 py-1 text-sm uppercase tracking-widest border-b-2 border-primary'>
+                            {eventDate.toLocaleDateString("id-ID", {
+                              month: "short",
+                            })}
+                          </div>
+                          <div className='px-4 py-2 text-2xl leading-none'>
+                            {eventDate.toLocaleDateString("id-ID", {
+                              day: "numeric",
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
 
-                      <div className='space-y-4 font-bold text-primary/80 mt-6 pt-4 border-t-2 border-primary/10'>
-                        {event.date && (
-                          <div className='flex items-center text-sm'>
-                            <div className='w-8 h-8 rounded-full bg-accent-peach/20 border-2 border-primary flex items-center justify-center mr-3 flex-shrink-0'>
-                              <CalendarIcon className='w-4 h-4 text-accent-orange' />
+                    <div className='p-6 flex-1 flex flex-col justify-between bg-white rounded-b-xl'>
+                      <div>
+                        <h3 className='font-display font-black text-2xl text-primary leading-tight mb-4 group-hover:text-accent-orange transition-colors line-clamp-2'>
+                          {event.title}
+                        </h3>
+
+                        <div className='space-y-4 font-bold text-primary/80 mt-6 pt-4 border-t-2 border-primary/10'>
+                          {event.date && (
+                            <div className='flex items-center text-sm'>
+                              <div className='w-8 h-8 rounded-full bg-accent-peach/20 border-2 border-primary flex items-center justify-center mr-3 shrink-0'>
+                                <CalendarIcon className='w-4 h-4 text-accent-orange' />
+                              </div>
+                              <span>
+                                {eventDate.toLocaleDateString("id-ID", {
+                                  weekday: "long",
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })}
+                              </span>
                             </div>
-                            <span>
-                              {eventDate.toLocaleDateString("id-ID", {
-                                weekday: "long",
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              })}
-                            </span>
-                          </div>
-                        )}
-                        {event.location && (
-                          <div className='flex items-center text-sm'>
-                            <div className='w-8 h-8 rounded-full bg-accent-peach/20 border-2 border-primary flex items-center justify-center mr-3 flex-shrink-0'>
-                              <MapPinIcon className='w-4 h-4 text-accent-orange' />
+                          )}
+                          {event.location && (
+                            <div className='flex items-center text-sm'>
+                              <div className='w-8 h-8 rounded-full bg-accent-peach/20 border-2 border-primary flex items-center justify-center mr-3 shrink-0'>
+                                <MapPinIcon className='w-4 h-4 text-accent-orange' />
+                              </div>
+                              <span className='truncate'>{event.location}</span>
                             </div>
-                            <span className='truncate'>{event.location}</span>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              );
-            })}
+                  </Link>
+                );
+              },
+            )}
           </div>
         )}
 
@@ -186,7 +199,7 @@ export default async function EventsPage({
             {page > 1 ? (
               <Link
                 href={`/events?page=${page - 1}`}
-                className='px-6 py-4 rounded-xl border-4 border-primary bg-white text-primary hover:bg-accent-orange hover:text-white shadow-[6px_6px_0px_0px_#162836] hover:shadow-[2px_2px_0px_0px_#162836] hover:translate-y-[4px] hover:translate-x-[4px] active:shadow-none active:translate-y-[6px] active:translate-x-[6px] transition-all text-xl uppercase'
+                className='px-6 py-4 rounded-xl border-4 border-primary bg-white text-primary hover:bg-accent-orange hover:text-white shadow-[6px_6px_0px_0px_#162836] hover:shadow-[2px_2px_0px_0px_#162836] hover:translate-y-1 hover:translate-x-1 active:shadow-none active:translate-y-1.5 active:translate-x-1.5 transition-all text-xl uppercase'
               >
                 Sebelumnya
               </Link>
@@ -205,7 +218,7 @@ export default async function EventsPage({
             {page < totalPages ? (
               <Link
                 href={`/events?page=${page + 1}`}
-                className='px-6 py-4 rounded-xl border-4 border-primary bg-accent-peach text-primary hover:bg-accent-orange hover:text-white shadow-[6px_6px_0px_0px_#162836] hover:shadow-[2px_2px_0px_0px_#162836] hover:translate-y-[4px] hover:translate-x-[4px] active:shadow-none active:translate-y-[6px] active:translate-x-[6px] transition-all text-xl uppercase'
+                className='px-6 py-4 rounded-xl border-4 border-primary bg-accent-peach text-primary hover:bg-accent-orange hover:text-white shadow-[6px_6px_0px_0px_#162836] hover:shadow-[2px_2px_0px_0px_#162836] hover:translate-y-1 hover:translate-x-1 active:shadow-none active:translate-y-1.5 active:translate-x-1.5 transition-all text-xl uppercase'
               >
                 Selanjutnya
               </Link>

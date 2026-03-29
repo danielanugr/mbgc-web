@@ -2,7 +2,6 @@ import { client } from "@/sanity/client";
 import { EXPERIMENTAL_getAbout } from "@/sanity/lib/queries";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Instagram,
   MessageCircle,
@@ -15,13 +14,16 @@ import {
   MapPin,
 } from "lucide-react";
 
+import { generateSEOMetadata } from "@/lib/seo";
+
 export const revalidate = 3600;
 
-export const metadata = {
-  title: "Tentang Kami | Mataram Board Game",
+export const metadata = generateSEOMetadata({
+  title: "Tentang",
   description:
     "Kenali komunitas board game pertama di Kota Mataram. Berdiri sejak Mei 2024, kami hadir untuk mengumpulkan para pecinta board game di Mataram.",
-};
+  url: "/about",
+});
 
 const COMMUNITY_STATS = [
   { label: "Berdiri", value: "Mei 2024", icon: CalendarDays },
@@ -76,7 +78,7 @@ export default async function AboutPage() {
 
           <div className='relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left flex-1'>
             <div className='flex-1'>
-              <div className='inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-accent-orange border-2 border-primary text-white font-bold font-display mb-6 shadow-[4px_4px_0px_0px_#162836] rotate-[-2deg]'>
+              <div className='inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-accent-orange border-2 border-primary text-white font-bold font-display mb-6 shadow-[4px_4px_0px_0px_#162836] -rotate-2'>
                 <Target className='w-5 h-5' />
                 <span className='uppercase tracking-wide'>
                   Mataram Board Game Community

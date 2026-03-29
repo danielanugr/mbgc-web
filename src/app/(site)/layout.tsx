@@ -4,6 +4,8 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
+import { generateSEOMetadata } from "@/lib/seo";
+
 const fredoka = Fredoka({
   variable: "--font-fredoka",
   subsets: ["latin"],
@@ -14,11 +16,7 @@ const quicksand = Quicksand({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Mataram Board Game Community",
-  description:
-    "Pusat informasi kegiatan playday, gallery, dan review Mataram Board Game.",
-};
+export const metadata: Metadata = generateSEOMetadata();
 
 export default function RootLayout({
   children,

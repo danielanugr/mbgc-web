@@ -1,11 +1,4 @@
-import {
-  ArrowRight,
-  CalendarDays,
-  MapPin,
-  Instagram,
-  Youtube,
-  ImageIcon,
-} from "lucide-react";
+import { ArrowRight, CalendarDays, MapPin, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/sanity/client";
@@ -15,7 +8,7 @@ import {
 } from "@/sanity/lib/queries";
 import { urlForImage } from "@/sanity/lib/image";
 
-export const revalidate = 60; // ISR
+export const revalidate = 60;
 
 export default async function Home() {
   const [upcomingEvents, galleries] = await Promise.all([
@@ -30,9 +23,11 @@ export default async function Home() {
     <main className='flex-1 flex flex-col items-center'>
       <header className='container-fluid pt-10 pb-32 flex flex-col items-center text-center relative overflow-hidden md:overflow-visible'>
         <div className='absolute -z-10 pointer-events-none top-10 left-[-5%] md:left-[10%] w-20 h-20 md:w-24 md:h-24 opacity-30 md:opacity-80 animate-blob-bounce-delayed'>
-          <img
+          <Image
             src='/meeple_peach.svg'
             alt='Meeple'
+            width={96}
+            height={96}
             className='w-full h-full object-contain -rotate-12'
           />
         </div>
@@ -40,23 +35,29 @@ export default async function Home() {
           className='absolute -z-10 pointer-events-none top-32 md:top-40 right-[-5%] md:right-[20%] w-16 h-16 md:w-20 md:h-20 opacity-30 md:opacity-90 animate-blob-bounce-delayed'
           style={{ animationDelay: "2s" }}
         >
-          <img
+          <Image
             src='/dice_white.svg'
             alt='Dice'
+            width={80}
+            height={80}
             className='w-full h-full object-contain rotate-12'
           />
         </div>
         <div className='absolute -z-10 pointer-events-none bottom-[10%] md:bottom-20 right-[-5%] md:right-[15%] w-24 h-24 md:w-28 md:h-28 opacity-30 md:opacity-90 animate-blob-bounce'>
-          <img
+          <Image
             src='/meeple_orange.svg'
             alt='Meeple'
+            width={112}
+            height={112}
             className='w-full h-full object-contain rotate-45'
           />
         </div>
         <div className='absolute -z-10 pointer-events-none bottom-[30%] md:bottom-40 left-[-5%] md:left-[15%] w-16 h-16 md:w-20 md:h-20 opacity-20 md:opacity-60 animate-blob-bounce'>
-          <img
+          <Image
             src='/meeple_dark_blue.svg'
             alt='Meeple'
+            width={80}
+            height={80}
             className='w-full h-full object-contain -rotate-45'
           />
         </div>
@@ -125,7 +126,7 @@ export default async function Home() {
         )}
       </header>
 
-      <section className='w-full bg-primary text-background py-24 border-y-[4px] border-primary relative overflow-visible'>
+      <section className='w-full bg-primary text-background py-24 border-y-4 border-primary relative overflow-visible'>
         <div className='container-fluid'>
           <div className='flex flex-col md:flex-row items-end justify-between mb-16 gap-6'>
             <div className='max-w-2xl'>
@@ -152,7 +153,7 @@ export default async function Home() {
                 {recentGalleries[0] && (
                   <Link
                     href={`/gallery/${recentGalleries[0].slug}`}
-                    className='col-span-1 md:col-span-2 group relative h-[400px] rounded-2xl overflow-hidden border-[3px] border-background bg-primary'
+                    className='col-span-1 md:col-span-2 group relative h-100 rounded-2xl overflow-hidden border-[3px] border-background bg-primary'
                   >
                     <div className='absolute inset-0 bg-accent-orange/20 group-hover:bg-transparent transition-colors z-10'></div>
                     <div className='absolute bottom-6 left-6 z-20'>
@@ -161,12 +162,14 @@ export default async function Home() {
                       </span>
                     </div>
                     {recentGalleries[0].coverImage ? (
-                      <img
+                      <Image
                         src={urlForImage(recentGalleries[0].coverImage)
                           .width(1200)
                           .height(800)
                           .url()}
                         alt={recentGalleries[0].title || "Gallery"}
+                        width={1200}
+                        height={800}
                         className='object-cover w-full h-full group-hover:scale-105 transition-transform duration-700'
                       />
                     ) : (
@@ -179,7 +182,7 @@ export default async function Home() {
                 {recentGalleries[1] && (
                   <Link
                     href={`/gallery/${recentGalleries[1].slug}`}
-                    className='group relative h-[400px] rounded-2xl overflow-hidden border-[3px] border-background bg-accent-peach'
+                    className='group relative h-100 rounded-2xl overflow-hidden border-[3px] border-background bg-accent-peach'
                   >
                     <div className='absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors z-10'></div>
                     <div className='absolute bottom-6 left-6 z-20'>
@@ -188,12 +191,14 @@ export default async function Home() {
                       </span>
                     </div>
                     {recentGalleries[1].coverImage ? (
-                      <img
+                      <Image
                         src={urlForImage(recentGalleries[1].coverImage)
                           .width(800)
                           .height(800)
                           .url()}
                         alt={recentGalleries[1].title || "Gallery"}
+                        width={800}
+                        height={800}
                         className='object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 mix-blend-multiply'
                       />
                     ) : (

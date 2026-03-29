@@ -10,7 +10,7 @@ export async function GET() {
     } else {
       return NextResponse.json(result, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.error("BGG Sync API Error:", error);
     return NextResponse.json(
       { success: false, message: error.message },
@@ -19,7 +19,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: Request /* eslint-disable-line @typescript-eslint/no-unused-vars */) {
   try {
     const result = await syncToSanity();
 
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     } else {
       return NextResponse.json(result, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) {
     console.error("BGG Sync API Error:", error);
     return NextResponse.json(
       { success: false, message: error.message },
