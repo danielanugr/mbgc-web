@@ -21,11 +21,6 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    // Sebagai API public, dalam aplikasi nyata kita mungkin memerlukan
-    // secret token pada header Authorization, tapi untuk keperluan testing
-    // atau MVP (seperti PRD tanpa authentication), kita biarkan public/terbuka
-    // atau bisa tambahkan basic secure secret.
-
     const result = await syncToSanity();
 
     if (result.success) {

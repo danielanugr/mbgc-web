@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 export function Navbar() {
@@ -15,11 +16,20 @@ export function Navbar() {
 
   return (
     <nav className='w-full flex items-center justify-between py-6 container-fluid relative z-10'>
-      <Link
-        href='/'
-        className='font-display font-black text-3xl tracking-tighter text-primary'
-      >
-        MBGC<span className='text-accent-orange'>.</span>
+      <Link href='/' className='flex items-center gap-2 group'>
+        <div className='relative w-16 h-16 md:w-20 md:h-20 transition-transform group-hover:scale-110 group-hover:rotate-[-5deg] duration-300'>
+          <Image
+            src='/logo_orange_peach.png'
+            alt='MBGC Logo'
+            fill
+            sizes='(max-width: 768px) 64px, 80px'
+            className='object-contain'
+            priority
+          />
+        </div>
+        <span className='font-display font-black text-3xl tracking-tighter text-primary hidden sm:block group-hover:text-accent-orange transition-colors'>
+          MBGC<span className='text-accent-orange'>.</span>
+        </span>
       </Link>
       <div className='hidden md:flex gap-8 font-bold text-lg font-display'>
         {navLinks.map((link) => {

@@ -4,10 +4,28 @@ import {
   MapPin,
   Instagram,
   Youtube,
+  ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
+import { client } from "@/sanity/client";
+import {
+  EXPERIMENTAL_getUpcomingEvents,
+  EXPERIMENTAL_getAllGalleries,
+} from "@/sanity/lib/queries";
+import { urlForImage } from "@/sanity/lib/image";
 
-export default function Home() {
+export const revalidate = 60; // ISR
+
+export default async function Home() {
+  const [upcomingEvents, galleries] = await Promise.all([
+    client.fetch(EXPERIMENTAL_getUpcomingEvents),
+    client.fetch(EXPERIMENTAL_getAllGalleries),
+  ]);
+
+  const nextEvent = upcomingEvents.length > 0 ? upcomingEvents[0] : null;
+  const recentGalleries = galleries.slice(0, 2);
+
   return (
     <main className='flex-1 flex flex-col items-center'>
       <header className='container-fluid pt-10 pb-32 flex flex-col items-center text-center relative overflow-hidden md:overflow-visible'>
@@ -54,36 +72,60 @@ export default function Home() {
           Gabung keseruannya sekarang! Main bareng, ketawa bareng, dari board
           game ringan sampai yang mikir keras.
         </p>
-        <div className='mt-16 w-full max-w-3xl bg-white border-playful rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[8px_8px_0px_0px_#162836] relative overflow-hidden group'>
-          <div className='absolute -right-10 -top-10 w-40 h-40 bg-accent-peach rounded-full opacity-20 group-hover:scale-150 transition-transform duration-700'></div>
+        {nextEvent ? (
+          <div className='mt-16 w-full max-w-3xl bg-white border-playful rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[8px_8px_0px_0px_#162836] relative overflow-hidden group'>
+            <div className='absolute -right-10 -top-10 w-40 h-40 bg-accent-peach rounded-full opacity-20 group-hover:scale-150 transition-transform duration-700'></div>
 
-          <div className='relative text-left flex-1'>
-            <h3 className='text-accent-orange font-bold text-lg mb-1 flex items-center gap-2'>
-              <CalendarDays size={20} /> EVENT TERDEKAT
-            </h3>
-            <h2 className='font-display text-4xl font-bold text-primary mb-3'>
-              Playday #24: Weekend Warriors
-            </h2>
-            <div className='flex flex-wrap gap-4 text-primary/80 font-bold'>
-              <span className='flex items-center gap-1'>
-                <CalendarDays size={18} /> Minggu, 25 Nov 2023
-              </span>
-              <span className='flex items-center gap-1'>
-                <MapPin size={18} /> Kopi Koccoc, Mataram
-              </span>
+            <div className='relative text-left flex-1'>
+              <h3 className='text-accent-orange font-bold text-lg mb-1 flex items-center gap-2'>
+                <CalendarDays size={20} /> EVENT TERDEKAT
+              </h3>
+              <h2 className='font-display text-4xl font-bold text-primary mb-3'>
+                {nextEvent.title}
+              </h2>
+              <div className='flex flex-wrap gap-4 text-primary/80 font-bold'>
+                <span className='flex items-center gap-1'>
+                  <CalendarDays size={18} />{" "}
+                  {nextEvent.date
+                    ? new Date(nextEvent.date).toLocaleDateString("id-ID", {
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "TBA"}
+                </span>
+                {nextEvent.location && (
+                  <span className='flex items-center gap-1'>
+                    <MapPin size={18} /> {nextEvent.location}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className='shrink-0 relative'>
+              <Link
+                href={`/events/${nextEvent.slug}`}
+                className='bg-accent-orange text-white font-display text-xl font-bold px-8 py-4 rounded-xl border-playful shadow-[4px_4px_0px_0px_#162836] hover:shadow-[6px_6px_0px_0px_#162836] hover:-translate-y-1 transition-all active:translate-y-1 active:shadow-[0px_0px_0px_0px_#162836] flex items-center gap-2'
+              >
+                DETAIL EVENT <ArrowRight size={24} />
+              </Link>
             </div>
           </div>
-
-          <div className='shrink-0 relative'>
-            <button className='bg-accent-orange text-white font-display text-xl font-bold px-8 py-4 rounded-xl border-playful shadow-[4px_4px_0px_0px_#162836] hover:shadow-[6px_6px_0px_0px_#162836] hover:-translate-y-1 transition-all active:translate-y-1 active:shadow-[0px_0px_0px_0px_#162836] flex items-center gap-2'>
-              RSVP NOW <ArrowRight size={24} />
-            </button>
+        ) : (
+          <div className='mt-16 w-full max-w-3xl bg-white border-playful rounded-2xl p-8 text-center shadow-[8px_8px_0px_0px_#162836]'>
+            <h3 className='font-display text-3xl font-bold text-primary mb-2'>
+              Tunggu Event Selanjutnya!
+            </h3>
+            <p className='text-primary/70 font-bold'>
+              Saat ini belum ada jadwal playday terdekat. Pantau terus IG kami
+              atau gabung grup untuk info terbaru.
+            </p>
           </div>
-        </div>
+        )}
       </header>
 
       <section className='w-full bg-primary text-background py-24 border-y-[4px] border-primary relative overflow-visible'>
-        {" "}
         <div className='container-fluid'>
           <div className='flex flex-col md:flex-row items-end justify-between mb-16 gap-6'>
             <div className='max-w-2xl'>
@@ -105,65 +147,68 @@ export default function Home() {
           </div>
 
           <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-            <div className='col-span-1 md:col-span-2 group relative h-[400px] rounded-2xl overflow-hidden border-[3px] border-background'>
-              <div className='absolute inset-0 bg-accent-orange/20 group-hover:bg-transparent transition-colors z-10'></div>
-              <img
-                src='https://images.unsplash.com/photo-1632501641765-e5e8d5a71019?q=80&w=1500&auto=format&fit=crop'
-                alt='Board Game Playing'
-                className='object-cover w-full h-full group-hover:scale-105 transition-transform duration-700'
-              />
-            </div>
-            <div className='group relative h-[400px] rounded-2xl overflow-hidden border-[3px] border-background bg-accent-peach'>
-              <div className='absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors z-10'></div>
-              <img
-                src='https://images.unsplash.com/photo-1611891487122-2075b9e7fd18?q=80&w=800&auto=format&fit=crop'
-                alt='Dice overlay'
-                className='object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 mix-blend-multiply'
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className='container-fluid py-24 relative'>
-        <h2 className='font-display text-5xl md:text-6xl font-bold text-primary mb-16 text-center'>
-          KITA DI <span className='text-accent-orange'>SOCIAL MEDIA</span>
-        </h2>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-12'>
-          <div className='bg-white border-playful rounded-3xl p-8 shadow-playful relative'>
-            <div className='absolute -top-6 -left-6 bg-primary text-white p-4 rounded-xl rotate-[-12deg] border-playful flex items-center gap-2'>
-              <Youtube size={32} />
-              <span className='font-display font-bold text-xl'>
-                TikTok Reels
-              </span>
-            </div>
-            <div className='mt-8 grid grid-cols-2 gap-4'>
-              <div className='aspect-[9/16] bg-gray-100 rounded-xl border-dashed border-2 border-primary/30 flex justify-center items-center font-bold text-primary/50 text-center p-4'>
-                Mockup TikTok
-                <br />
-                Embed #1
+            {recentGalleries.length > 0 ? (
+              <>
+                {recentGalleries[0] && (
+                  <Link
+                    href={`/gallery/${recentGalleries[0].slug}`}
+                    className='col-span-1 md:col-span-2 group relative h-[400px] rounded-2xl overflow-hidden border-[3px] border-background bg-primary'
+                  >
+                    <div className='absolute inset-0 bg-accent-orange/20 group-hover:bg-transparent transition-colors z-10'></div>
+                    <div className='absolute bottom-6 left-6 z-20'>
+                      <span className='bg-background text-primary font-display font-black text-xl px-4 py-2 border-2 border-primary shadow-[4px_4px_0px_0px_#162836]'>
+                        {recentGalleries[0].title}
+                      </span>
+                    </div>
+                    {recentGalleries[0].coverImage ? (
+                      <img
+                        src={urlForImage(recentGalleries[0].coverImage)
+                          .width(1200)
+                          .height(800)
+                          .url()}
+                        alt={recentGalleries[0].title || "Gallery"}
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform duration-700'
+                      />
+                    ) : (
+                      <div className='w-full h-full flex items-center justify-center'>
+                        <ImageIcon size={48} className='text-background/20' />
+                      </div>
+                    )}
+                  </Link>
+                )}
+                {recentGalleries[1] && (
+                  <Link
+                    href={`/gallery/${recentGalleries[1].slug}`}
+                    className='group relative h-[400px] rounded-2xl overflow-hidden border-[3px] border-background bg-accent-peach'
+                  >
+                    <div className='absolute inset-0 bg-primary/20 group-hover:bg-transparent transition-colors z-10'></div>
+                    <div className='absolute bottom-6 left-6 z-20'>
+                      <span className='bg-background text-primary font-display font-black text-xl px-4 py-2 border-2 border-primary shadow-[4px_4px_0px_0px_#162836]'>
+                        {recentGalleries[1].title}
+                      </span>
+                    </div>
+                    {recentGalleries[1].coverImage ? (
+                      <img
+                        src={urlForImage(recentGalleries[1].coverImage)
+                          .width(800)
+                          .height(800)
+                          .url()}
+                        alt={recentGalleries[1].title || "Gallery"}
+                        className='object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 mix-blend-multiply'
+                      />
+                    ) : (
+                      <div className='w-full h-full flex items-center justify-center'>
+                        <ImageIcon size={48} className='text-primary/20' />
+                      </div>
+                    )}
+                  </Link>
+                )}
+              </>
+            ) : (
+              <div className='col-span-1 md:col-span-3 text-center py-20 bg-primary-dark/20 rounded-2xl border-[3px] border-background shadow-inner opacity-70'>
+                <p className='font-bold text-lg'>Belum ada foto keseruan.</p>
               </div>
-              <div className='aspect-[9/16] bg-gray-100 rounded-xl border-dashed border-2 border-primary/30 flex justify-center items-center font-bold text-primary/50 text-center p-4'>
-                Mockup TikTok
-                <br />
-                Embed #2
-              </div>
-            </div>
-          </div>
-
-          <div className='bg-accent-peach/20 border-playful rounded-3xl p-8 shadow-playful relative'>
-            <div className='absolute -top-6 -right-6 bg-accent-orange text-white p-4 rounded-xl rotate-[12deg] border-playful flex items-center gap-2'>
-              <Instagram size={32} />
-              <span className='font-display font-bold text-xl'>Instagram</span>
-            </div>
-            <div className='mt-8 grid grid-cols-2 gap-4'>
-              <div className='aspect-square bg-white rounded-xl border-playful flex justify-center items-center font-bold text-primary/50 text-center p-4'>
-                Mockup IG Post/Reel #1
-              </div>
-              <div className='aspect-square bg-white rounded-xl border-playful flex justify-center items-center font-bold text-primary/50 text-center p-4'>
-                Mockup IG Post/Reel #2
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>

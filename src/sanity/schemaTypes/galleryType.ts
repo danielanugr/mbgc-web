@@ -37,16 +37,11 @@ export const galleryType = defineType({
       type: "array",
       of: [
         {
-          type: "object",
-          name: "galleryImage",
-          title: "Gallery Image",
+          type: "image",
+          options: {
+            hotspot: true,
+          },
           fields: [
-            {
-              name: "url",
-              title: "Image URL (R2 CDN)",
-              type: "url",
-              validation: (rule) => rule.required(),
-            },
             {
               name: "alt",
               title: "Alt Text",
@@ -58,8 +53,7 @@ export const galleryType = defineType({
       options: {
         layout: "grid",
       },
-      description:
-        "Upload gambar melalui /api/upload atau tools admin, lalu masukkan URL CDN-nya di sini.",
+      description: "Upload langsung gambar foto/album ke sini.",
     }),
   ],
 });

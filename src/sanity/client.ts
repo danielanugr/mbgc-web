@@ -5,10 +5,9 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true, // Use CDN for faster read-only access (default for public facing)
+  useCdn: true,
 });
 
-// Lazy-initialized write client to prevent secret inlining at build time
 let _writeClient: SanityClient | null = null;
 
 export function getWriteClient(): SanityClient {

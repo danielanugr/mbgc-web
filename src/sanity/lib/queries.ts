@@ -92,3 +92,45 @@ export const EXPERIMENTAL_getBoardGamesPaginated = defineQuery(`
 export const EXPERIMENTAL_getTotalBoardGames = defineQuery(`
   count(*[_type == "boardGame" && (coalesce($searchQuery, "") == "" || name match "*" + $searchQuery + "*")])
 `);
+
+// Gallery Queries
+export const EXPERIMENTAL_getAllGalleries = defineQuery(`
+  *[_type == "gallery"] | order(_createdAt desc) {
+    _id,
+    title,
+    "slug": slug.current,
+    "imageCount": count(images),
+    "coverImage": images[0],
+    "event": event->{
+      _id,
+      title,
+      "slug": slug.current,
+      date
+    }
+  }
+`);
+
+export const EXPERIMENTAL_getGalleryBySlug = defineQuery(`
+  *[_type == "gallery" && slug.current == $slug][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    images,
+    "event": event->{
+      _id,
+      title,
+      "slug": slug.current,
+      date,
+      location
+    }
+  }
+`);
+
+// About Queries
+export const EXPERIMENTAL_getAbout = defineQuery(`
+  *[_type == "about"][0] {
+    _id,
+    title,
+    content
+  }
+`);
