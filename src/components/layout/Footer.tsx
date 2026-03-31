@@ -1,4 +1,4 @@
-import { Instagram } from "lucide-react";
+import { Instagram, MessageCircle } from "lucide-react";
 import Image from "next/image";
 
 export function Footer() {
@@ -33,12 +33,22 @@ export function Footer() {
         >
           <Instagram size={24} /> @mataram_bg
         </a>
-        <button
-          type='button'
+        <a
+          href='https://bit.ly/MBGCgroup'
+          target='_blank'
+          rel='noreferrer'
           className='bg-white text-primary font-display text-xl px-6 py-3 rounded-xl shadow-[4px_4px_0px_0px_#162836] border-2 border-primary hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#162836] transition-all flex items-center justify-center gap-2'
         >
-          Join WhatsApp
-        </button>
+          <MessageCircle size={24} /> Join WhatsApp
+        </a>
+        <a
+          href='https://wa.me/6285156110807'
+          target='_blank'
+          rel='noreferrer'
+          className='bg-white text-primary font-display text-xl px-6 py-3 rounded-xl shadow-[4px_4px_0px_0px_#162836] border-2 border-primary hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#162836] transition-all flex items-center justify-center gap-2'
+        >
+          <MessageCircle size={24} /> WhatsApp Kami
+        </a>
       </div>
     </footer>
   );

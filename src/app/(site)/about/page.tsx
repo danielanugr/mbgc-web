@@ -158,6 +158,14 @@ export default async function AboutPage() {
                 jago strategi. Cukup datang, duduk, dan siap seru-seruan!
               </p>
               <p className='text-xl font-bold text-primary/80 leading-relaxed'>
+                Dari niat sederhana untuk main bareng, kami tumbuh menjadi
+                komunitas yang solid dengan misi yang lebih besar:
+                memperkenalkan board game dan membangun ekosistem board gaming
+                yang inklusif dan berkelanjutan di Mataram. Kami percaya bahwa
+                board game bukan hanya soal hiburan, tapi juga tentang membangun
+                koneksi, melatih strategi, dan menciptakan kenangan bersama.
+              </p>
+              <p className='text-xl font-bold text-primary/80 leading-relaxed'>
                 Koleksi kami terus bertambah, komunitas terus berkembang, dan
                 kami bangga menjadi bagian dari peta board gaming di Indonesia.
               </p>

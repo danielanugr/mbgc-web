@@ -29,7 +29,7 @@ export default function RootLayout({
         className={`${fredoka.variable} ${quicksand.variable} antialiased min-h-screen flex flex-col font-body bg-background text-foreground selection:bg-accent-1 selection:text-white`}
         suppressHydrationWarning
       >
-        <div className='relative flex min-h-screen flex-col overflow-hidden'>
+        <div className='relative flex min-h-screen flex-col overflow-clip'>
           <div
             className="pointer-events-none fixed inset-0 z-50 h-[200vh] w-[200vw] -translate-x-1/2 -translate-y-1/2 opacity-5 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-multiply"
             suppressHydrationWarning
