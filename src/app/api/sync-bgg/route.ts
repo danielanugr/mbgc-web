@@ -1,7 +1,17 @@
 import { NextResponse } from "next/server";
 import { syncToSanity } from "@/services/bgg";
+import { isAuthorizedSyncRequest } from "@/lib/sync-bgg";
 
-export async function GET() {
+const expectedSecret = process.env.BGG_SYNC_SECRET;
+
+export async function GET(req: Request) {
+  if (!isAuthorizedSyncRequest(req, expectedSecret)) {
+    return NextResponse.json(
+      { success: false, message: "Unauthorized" },
+      { status: 401 },
+    );
+  }
+
   try {
     const result = await syncToSanity();
 
@@ -19,7 +29,14 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request /* eslint-disable-line @typescript-eslint/no-unused-vars */) {
+export async function POST(req: Request) {
+  if (!isAuthorizedSyncRequest(req, expectedSecret)) {
+    return NextResponse.json(
+      { success: false, message: "Unauthorized" },
+      { status: 401 },
+    );
+  }
+
   try {
     const result = await syncToSanity();
 
