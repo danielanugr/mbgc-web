@@ -134,3 +134,51 @@ export const EXPERIMENTAL_getAbout = defineQuery(`
     content
   }
 `);
+
+// Blog Post Queries
+export const EXPERIMENTAL_getPostsPaginated = defineQuery(`
+  *[_type == "post"
+    && (coalesce($contentType, "") == "" || contentType == $contentType)
+    && (coalesce($tag, "") == "" || $tag in tags)
+  ] | order(publishedAt desc) [$start...$end] {
+    _id,
+    title,
+    "slug": slug.current,
+    contentType,
+    excerpt,
+    coverImage,
+    publishedAt,
+    tags,
+    "readingTime": coalesce(round(length(string::split(pt::text(body), " ")) / 200), 1)
+  }
+`);
+
+export const EXPERIMENTAL_getTotalPosts = defineQuery(`
+  count(*[_type == "post"
+    && (coalesce($contentType, "") == "" || contentType == $contentType)
+    && (coalesce($tag, "") == "" || $tag in tags)
+  ])
+`);
+
+export const EXPERIMENTAL_getPostFilterOptions = defineQuery(`
+  {
+    "contentTypes": array::unique(*[_type == "post" && defined(contentType)].contentType),
+    "tags": array::unique(*[_type == "post" && count(tags) > 0].tags[])
+  }
+`);
+
+export const EXPERIMENTAL_getPostBySlug = defineQuery(`
+  *[_type == "post" && slug.current == $slug][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    contentType,
+    excerpt,
+    authorName,
+    publishedAt,
+    coverImage,
+    tags,
+    body,
+    "readingTime": coalesce(round(length(string::split(pt::text(body), " ")) / 200), 1)
+  }
+`);

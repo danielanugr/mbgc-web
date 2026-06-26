@@ -48,3 +48,29 @@ export interface SanityBoardGame {
   playTime?: number;
   bggId?: number;
 }
+
+export interface BlogPostListItem {
+  _id: string;
+  title?: string;
+  slug?: string;
+  contentType?: string;
+  excerpt?: string;
+  coverImage?: SanityImage;
+  publishedAt?: string;
+  tags?: string[];
+  readingTime?: number;
+}
+
+export interface BlogPostDetail {
+  _id: string;
+  title?: string;
+  slug?: string;
+  contentType?: string;
+  excerpt?: string;
+  authorName?: string;
+  publishedAt?: string;
+  coverImage?: SanityImage;
+  tags?: string[];
+  body?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  readingTime?: number;
+}
